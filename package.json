@@ -16,12 +16,17 @@
     "@mui/icons-material": "^5.15.0",
     "@mui/material": "^5.15.0",
     "axios": "^1.6.2",
+    "lodash": "^4.17.21",
+    "qs": "^6.11.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.12.0",
-    "react-router-dom": "^6.20.1"
+    "react-router-dom": "^6.20.1",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.202",
+    "@types/qs": "^6.9.10",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
