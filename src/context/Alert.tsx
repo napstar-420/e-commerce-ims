@@ -53,7 +53,7 @@ const useAlertContext = (initState: StateType) => {
   return { state, actions };
 };
 
-type UseAlertContextType = ReturnType<typeof useAlertContext>;
+export type UseAlertContextType = ReturnType<typeof useAlertContext>;
 
 const initContextState: UseAlertContextType = {
   state: initState,

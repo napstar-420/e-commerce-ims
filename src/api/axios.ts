@@ -21,6 +21,9 @@ const axiosConfig: AxiosRequestConfig = {
   paramsSerializer: {
     serialize: (params) => stringify(params, { arrayFormat: 'brackets' }),
   },
+  headers: {
+    'Content-Type': 'application/json',
+  },
 };
 
 const axios: AxiosInstance = nAxios.create(axiosConfig);

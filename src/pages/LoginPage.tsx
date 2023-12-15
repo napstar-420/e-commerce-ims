@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState, useContext } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { v4 as uuid } from "uuid";
 import {
   Box,
@@ -13,28 +13,33 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import config from '../config';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { useAlert } from '../hooks/useAlert';
+import { ApiResponse, User } from '../dto';
 import axios from '../api/axios';
-import { AlertContext } from '../context/Alert';
-import Logo from '../assets/images/logo.png';
 import Notification from "../components/notification"
-import { ApiResponse } from '../dto';
+import Logo from '../assets/images/logo.png';
+import config from '../config';
 
 export default function LoginPage() {
-  const { actions } = useContext(AlertContext);
-  const [email, setEmail] = useState<string>('zohaib@email.com');
-  const [password, setPassword] = useState<string>('vsxgvsxhs');
+  const { actions: alertActions } = useAlert();
+  const { actions: authActions } = useAuth();
+  const [email, setEmail] = useState<string>('admin@example.com');
+  const [password, setPassword] = useState<string>('Password_97');
   const [forgotPassword, setForgotPassword] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     try {
       const response: ApiResponse = await axios.login({ email, password });
-      console.log(response)
+      const { user, accessToken }: { user: User, accessToken: string } = response.data;
+      authActions.update({ user, accessToken });
+      navigate('/');
     } catch (error: any) {
-      console.log(error);
-      actions.addAlert({
+      alertActions.addAlert({
         text: error.message,
         type: 'error',
         id: uuid()
@@ -71,7 +76,7 @@ export default function LoginPage() {
           />
           <TextField
             id='password'
-            label='password'
+            label='Password'
             variant='outlined'
             type='password'
             required
