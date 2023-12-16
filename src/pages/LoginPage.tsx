@@ -13,7 +13,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useAlert } from '../hooks/useAlert';
 import { ApiResponse, User } from '../dto';
@@ -25,10 +25,14 @@ import config from '../config';
 export default function LoginPage() {
   const { actions: alertActions } = useAlert();
   const { actions: authActions } = useAuth();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from: string = location.state?.from?.pathname || '/'; 
+
   const [email, setEmail] = useState<string>('admin@example.com');
   const [password, setPassword] = useState<string>('Password_97');
   const [forgotPassword, setForgotPassword] = useState<boolean>(false);
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
@@ -37,7 +41,7 @@ export default function LoginPage() {
       const response: ApiResponse = await axios.login({ email, password });
       const { user, accessToken }: { user: User, accessToken: string } = response.data;
       authActions.update({ user, accessToken });
-      navigate('/');
+      navigate(from);
     } catch (error: any) {
       alertActions.addAlert({
         text: error.message,

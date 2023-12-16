@@ -68,7 +68,7 @@ const initContextState: UseAuthContextType = {
     auth: initState,
     actions: {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        update: (payload: Payload) => {},
+        update: (_payload: Payload) => {},
         remove: () => {}
     }
 }

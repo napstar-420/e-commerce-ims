@@ -15,7 +15,7 @@ export const enum UserRoles {
   ADMIN = 'admin',
   USER = 'user',
   GUEST = 'guest'
-} 
+}
 
 export type ChildrenType = ReactElement | undefined;
 
