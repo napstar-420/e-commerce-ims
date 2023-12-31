@@ -1,9 +1,9 @@
-import { RouterProvider } from "react-router-dom"
-import { router } from './router'
-import { AuthProvider } from "./context/Auth"
-import { ThemeProvider } from "./context/Theme"
-import { AlertProvider } from "./context/Alert"
-import { ThemeType } from "./dto"
+import { RouterProvider } from 'react-router-dom';
+import { router } from './router';
+import { AuthProvider } from './context/Auth';
+import { ThemeProvider } from './context/Theme';
+import { AlertProvider } from './context/Alert';
+import { ThemeType } from './dto';
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
         </AlertProvider>
       </ThemeProvider>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;

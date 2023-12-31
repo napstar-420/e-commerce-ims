@@ -23,39 +23,44 @@ const reducer = (state: ThemeType, action: ReducerAction): ThemeType => {
 };
 
 const useThemeContext = (initState: ThemeType) => {
-    const [theme, dispatch] = useReducer(reducer, initState);
-    const toggleTheme = useCallback(() => dispatch({ type: REDUCER_ACTION_TYPE.TOGGLE }), []);
+  const [theme, dispatch] = useReducer(reducer, initState);
+  const toggleTheme = useCallback(
+    () => dispatch({ type: REDUCER_ACTION_TYPE.TOGGLE }),
+    []
+  );
 
-    return { theme, toggleTheme };
-}
+  return { theme, toggleTheme };
+};
 
 type UseThemeContextType = ReturnType<typeof useThemeContext>;
 
 const initContextState: UseThemeContextType = {
-    theme: initState,
-    toggleTheme: () => {}
-}
+  theme: initState,
+  toggleTheme: () => {},
+};
 
-export const ThemeContext = createContext<UseThemeContextType>(initContextState);
+export const ThemeContext =
+  createContext<UseThemeContextType>(initContextState);
 
 interface ThemeProviderProps {
-  children: ChildrenType,
-  initTheme: ThemeType
+  children: ChildrenType;
+  initTheme: ThemeType;
 }
 
-export const ThemeProvider = ({ children, initTheme }:  ThemeProviderProps): ReactElement => {
+export const ThemeProvider = ({
+  children,
+  initTheme,
+}: ThemeProviderProps): ReactElement => {
   const { theme, toggleTheme } = useThemeContext(initTheme);
   const muiTheme = createTheme({
     palette: {
       mode: theme,
-    }
-  })
+    },
+  });
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <MuiThemeProvider theme={muiTheme}>
-        { children }
-      </MuiThemeProvider>
+      <MuiThemeProvider theme={muiTheme}>{children}</MuiThemeProvider>
     </ThemeContext.Provider>
-  )
-}
+  );
+};

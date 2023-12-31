@@ -1,3 +1,5 @@
 export default {
-    LOGIN_URL: '/auth/user/login',
-}
+  LOGIN: '/auth/user/login',
+  GET_PRODUCTS: '/ims/products',
+  GET_BRANDS: '/ims/brands',
+};

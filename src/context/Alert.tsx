@@ -63,16 +63,19 @@ const initContextState: UseAlertContextType = {
   },
 };
 
-export const AlertContext = createContext<UseAlertContextType>(initContextState);
+export const AlertContext =
+  createContext<UseAlertContextType>(initContextState);
 
 interface AlertProviderProps {
-  children: ChildrenType
+  children: ChildrenType;
 }
 
-export const AlertProvider = ({ children }: AlertProviderProps): ReactElement => {
+export const AlertProvider = ({
+  children,
+}: AlertProviderProps): ReactElement => {
   return (
     <AlertContext.Provider value={useAlertContext(initState)}>
-      { children }
+      {children}
     </AlertContext.Provider>
-  )
-}
+  );
+};
