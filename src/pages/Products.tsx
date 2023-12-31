@@ -208,6 +208,9 @@ export default function Products() {
             />
           )}
         />
+        <Button fullWidth variant="contained" startIcon={<Search />}>
+          Search
+        </Button>
       </Toolbar>
       <Divider />
       <Box sx={{ padding: theme.spacing(4) }}>
