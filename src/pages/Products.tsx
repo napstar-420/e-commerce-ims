@@ -34,11 +34,13 @@ export default function Products() {
   const [brand, setBrand] = useState<string>('');
   const [brandsLoading, setBrandsLoading] = useState<boolean>(false);
   const [brandOptions, setBrandOptions] = useState<Brand[]>([]);
-  const [brandController, setBrandController] = useState<AbortController | null>(null)
+  const [brandController, setBrandController] =
+    useState<AbortController | null>(null);
   const [category, setCategory] = useState<string>('');
   const [categoryLoading, setCategoryLoading] = useState<boolean>(false);
   const [categoryOptions, setCategoryOptions] = useState<Category[]>([]);
-  const [categoryController, setCategoryController] = useState<AbortController | null>(null)
+  const [categoryController, setCategoryController] =
+    useState<AbortController | null>(null);
 
   const getBrands = useMemo(() => {
     return debounce(async (name) => {
@@ -147,15 +149,20 @@ export default function Products() {
         </Button>
       </Toolbar>
       <Divider />
-      <Toolbar>
+      <Toolbar
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: theme.spacing(1),
+          padding: theme.spacing(2),
+        }}
+      >
         <TextField
-          sx={{ flexGrow: '1' }}
           id="product-search"
           label="Search products"
           variant="outlined"
           type="text"
           size="small"
-          fullWidth
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           InputProps={{
@@ -166,7 +173,7 @@ export default function Products() {
             ),
           }}
         />
-        <FormControl fullWidth size="small">
+        <FormControl size="small">
           <InputLabel id="stock-select-label">Stock</InputLabel>
           <Select
             id="stock-select"
@@ -183,7 +190,7 @@ export default function Products() {
             <MenuItem value="">All</MenuItem>
           </Select>
         </FormControl>
-        <FormControl fullWidth size="small">
+        <FormControl size="small">
           <InputLabel id="quantity-select-label">Quantity</InputLabel>
           <Select
             id="quantity-select"
@@ -201,7 +208,7 @@ export default function Products() {
             <MenuItem value="">All</MenuItem>
           </Select>
         </FormControl>
-        <FormControl fullWidth size="small">
+        <FormControl size="small">
           <InputLabel id="price-select-label">Price</InputLabel>
           <Select
             id="price-select"
@@ -221,7 +228,6 @@ export default function Products() {
           </Select>
         </FormControl>
         <Autocomplete
-          fullWidth
           size="small"
           id="brand-search"
           autoComplete
@@ -231,9 +237,11 @@ export default function Products() {
           loading={brandsLoading}
           noOptionsText="No brands found"
           filterOptions={(x) => x}
-          getOptionLabel={option => option.brand_name}
+          getOptionLabel={(option) => option.brand_name}
           onInputChange={(_, value) => setBrand(value)}
-          isOptionEqualToValue={(option, value) => option.brand_id == value.brand_id}
+          isOptionEqualToValue={(option, value) =>
+            option.brand_id == value.brand_id
+          }
           renderInput={(params) => (
             <TextField
               {...params}
@@ -254,7 +262,6 @@ export default function Products() {
           )}
         />
         <Autocomplete
-          fullWidth
           size="small"
           id="category-search"
           autoComplete
@@ -264,9 +271,11 @@ export default function Products() {
           loading={categoryLoading}
           noOptionsText="No categories found"
           filterOptions={(x) => x}
-          getOptionLabel={option => option.category_name}
+          getOptionLabel={(option) => option.category_name}
           onInputChange={(_, value) => setCategory(value)}
-          isOptionEqualToValue={(option, value) => option.category_id == value.category_id}
+          isOptionEqualToValue={(option, value) =>
+            option.category_id == value.category_id
+          }
           renderInput={(params) => (
             <TextField
               {...params}
@@ -286,7 +295,7 @@ export default function Products() {
             />
           )}
         />
-        <Button fullWidth variant="contained" startIcon={<Search />}>
+        <Button variant="contained" startIcon={<Search />}>
           Search
         </Button>
       </Toolbar>
