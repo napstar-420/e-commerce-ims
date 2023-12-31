@@ -56,6 +56,11 @@ export interface Brand {
   brand_description?: string;
 }
 
+export interface Category {
+  category_id: number;
+  category_name: string;
+}
+
 export interface Product {
   product_id: number;
   product_name: string;

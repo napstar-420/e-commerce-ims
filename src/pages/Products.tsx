@@ -19,7 +19,7 @@ import { Add, Search, SentimentVeryDissatisfied } from '@mui/icons-material';
 import { debounce } from '@mui/material/utils';
 import { useTheme } from '@emotion/react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import { Brand, Product } from '../dto';
+import { Brand, Category, Product } from '../dto';
 import config from '../config';
 
 export default function Products() {
@@ -35,6 +35,10 @@ export default function Products() {
   const [brandsLoading, setBrandsLoading] = useState<boolean>(false);
   const [brandOptions, setBrandOptions] = useState<Brand[]>([]);
   const [brandController, setBrandController] = useState<AbortController | null>(null)
+  const [category, setCategory] = useState<string>('');
+  const [categoryLoading, setCategoryLoading] = useState<boolean>(false);
+  const [categoryOptions, setCategoryOptions] = useState<Category[]>([]);
+  const [categoryController, setCategoryController] = useState<AbortController | null>(null)
 
   const getBrands = useMemo(() => {
     return debounce(async (name) => {
@@ -69,6 +73,39 @@ export default function Products() {
     }, 500);
   }, [axios]);
 
+  const getCategories = useMemo(() => {
+    return debounce(async (name) => {
+      // If there's an ongoing request, cancel it
+      if (categoryController) {
+        categoryController.abort();
+        setCategoryController(null);
+      }
+
+      if (!name) {
+        setCategoryOptions([]);
+        setCategoryLoading(false);
+        return;
+      }
+
+      // Create a new AbortController for the current request
+      const controller = new AbortController();
+      setCategoryController(controller);
+      setCategoryLoading(true);
+
+      try {
+        const response = await axios.get(config.API.GET_CATEGORIES, {
+          params: { name },
+          signal: controller.signal,
+        });
+
+        const data: Category[] = response.data as Category[];
+        setCategoryOptions(data);
+      } finally {
+        setCategoryLoading(false);
+      }
+    }, 500);
+  }, [axios]);
+
   useEffect(() => {
     let isMounted: boolean = true;
     const controller = new AbortController();
@@ -89,7 +126,15 @@ export default function Products() {
 
   useEffect(() => {
     getBrands(brand);
+
+    return brandController?.abort();
   }, [brand]);
+
+  useEffect(() => {
+    getCategories(category);
+
+    return categoryController?.abort();
+  }, [category]);
 
   return (
     <Box>
@@ -184,7 +229,7 @@ export default function Products() {
           options={brandOptions}
           inputValue={brand}
           loading={brandsLoading}
-          noOptionsText="No Brands"
+          noOptionsText="No brands found"
           filterOptions={(x) => x}
           getOptionLabel={option => option.brand_name}
           onInputChange={(_, value) => setBrand(value)}
@@ -194,6 +239,39 @@ export default function Products() {
               {...params}
               label="Brand"
               placeholder="Brand name"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {brandsLoading ? (
+                      <CircularProgress color="inherit" size={20} />
+                    ) : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                ),
+              }}
+            />
+          )}
+        />
+        <Autocomplete
+          fullWidth
+          size="small"
+          id="category-search"
+          autoComplete
+          includeInputInList
+          options={categoryOptions}
+          inputValue={category}
+          loading={categoryLoading}
+          noOptionsText="No categories found"
+          filterOptions={(x) => x}
+          getOptionLabel={option => option.category_name}
+          onInputChange={(_, value) => setCategory(value)}
+          isOptionEqualToValue={(option, value) => option.category_id == value.category_id}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Category"
+              placeholder="Category name"
               InputProps={{
                 ...params.InputProps,
                 endAdornment: (
