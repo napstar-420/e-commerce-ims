@@ -28,7 +28,7 @@ export default function LoginPage() {
   const from: string = location.state?.from?.pathname || '/';
 
   const [email, setEmail] = useState<string>('admin@example.com');
-  const [password, setPassword] = useState<string>('Password_97');
+  const [password, setPassword] = useState<string>('password');
   const [forgotPassword, setForgotPassword] = useState<boolean>(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {

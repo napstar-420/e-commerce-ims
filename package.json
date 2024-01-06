@@ -15,6 +15,7 @@
     "@fontsource/roboto": "^5.0.8",
     "@mui/icons-material": "^5.15.0",
     "@mui/material": "^5.15.0",
+    "@mui/x-data-grid": "^6.18.7",
     "axios": "^1.6.2",
     "lodash": "^4.17.21",
     "qs": "^6.11.2",

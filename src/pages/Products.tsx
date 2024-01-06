@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useMemo, useState } from 'react';
 import {
   Autocomplete,
@@ -15,11 +16,13 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { Add, Search, SentimentVeryDissatisfied } from '@mui/icons-material';
+import { DataGrid } from '@mui/x-data-grid';
+import { Add, Search } from '@mui/icons-material';
 import { debounce } from '@mui/material/utils';
 import { useTheme } from '@emotion/react';
-import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { Brand, Category, Product } from '../dto';
+import { columns } from '../gridCols/products';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import config from '../config';
 
 export default function Products() {
@@ -295,29 +298,16 @@ export default function Products() {
             />
           )}
         />
-        <Button variant="contained" startIcon={<Search />}>
-          Search
-        </Button>
       </Toolbar>
       <Divider />
       <Box sx={{ padding: theme.spacing(4) }}>
-        {products.length ? (
-          products.map((product, index) => (
-            <Typography key={index}>{product.product_name}</Typography>
-          ))
-        ) : (
-          <Typography
-            variant="h4"
-            component="h4"
-            textAlign="center"
-            fontWeight="700"
-            color={theme.palette.text.disabled}
-          >
-            <SentimentVeryDissatisfied sx={{ fontSize: 80 }} />
-            <br />
-            No Products found
-          </Typography>
-        )}
+        <DataGrid
+          rows={products}
+          columns={columns}
+          getRowId={(row) => row.product_id}
+          checkboxSelection
+          disableRowSelectionOnClick
+        />
       </Box>
     </Box>
   );
