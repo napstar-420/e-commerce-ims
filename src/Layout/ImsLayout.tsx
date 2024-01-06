@@ -28,7 +28,7 @@ import { UserRoles } from '../dto';
 import config from '../config';
 
 const drawerWidth = 240;
-const mdBreakpoint = 900;
+const lgBreakpoint = 1200;
 
 interface SidebarItem {
   title: string;
@@ -100,7 +100,7 @@ interface SidebarProps {
 function Sidebar({ mobileOpen, handleSidebarToggle }: SidebarProps) {
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
   const { pathname } = useLocation();
-  const mobileSidebar = windowWidth < mdBreakpoint;
+  const mobileSidebar = windowWidth < lgBreakpoint;
 
   const updateWindowWidth = useCallback(
     (): void => setWindowWidth(window.innerWidth),
@@ -132,10 +132,11 @@ function Sidebar({ mobileOpen, handleSidebarToggle }: SidebarProps) {
       </List>
     </div>
   );
+
   return (
     <Box
       component="nav"
-      sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
+      sx={{ width: { lg: drawerWidth }, flexShrink: { lg: 0 } }}
     >
       <Drawer
         variant={mobileSidebar ? 'temporary' : 'permanent'}
@@ -181,7 +182,7 @@ function Header({ handleSidebarToggle }: HeaderProps) {
     <AppBar
       position="fixed"
       sx={{
-        width: { md: `calc(100% - ${drawerWidth}px)` },
+        width: { lg: `calc(100% - ${drawerWidth}px)` },
         ml: { sm: `${drawerWidth}px` },
       }}
     >
@@ -192,21 +193,21 @@ function Header({ handleSidebarToggle }: HeaderProps) {
             aria-label="open drawer"
             edge="start"
             onClick={handleSidebarToggle}
-            sx={{ display: { md: 'none' } }}
+            sx={{ display: { lg: 'none' } }}
           >
             <MenuIcon />
           </IconButton>
           <Typography
             variant="h5"
             component="h2"
-            sx={{ display: { xs: 'none', md: 'block' } }}
+            sx={{ display: { xs: 'none', lg: 'block' } }}
           >
             Inventory Management System
           </Typography>
           <Typography
             variant="h5"
             component="h2"
-            sx={{ display: { xs: 'block', md: 'none' } }}
+            sx={{ display: { xs: 'block', lg: 'none' } }}
           >
             IMS
           </Typography>
