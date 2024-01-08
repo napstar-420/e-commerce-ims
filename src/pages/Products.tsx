@@ -42,7 +42,7 @@ export default function Products() {
     const controller = new AbortController();
 
     const getProducts = async (): Promise<void> => {
-      const response = await axios.get(config.API.GET_PRODUCTS);
+      const response = await axios.get(config.API.PRODUCTS);
       const data: Product[] = response.data as Product[];
       isMounted && setProducts(data);
     };
@@ -155,7 +155,7 @@ export default function Products() {
           placeholder="Search brand"
           query="q"
           setValue={setBrand}
-          endpoint={config.API.GET_BRANDS}
+          endpoint={config.API.BRANDS}
           value={brand}
           getOptionLabel={(option) => option.brand_name}
           isOptionEqualToValue={(option, value) =>
@@ -170,7 +170,7 @@ export default function Products() {
           query="q"
           setValue={setCategory}
           value={category}
-          endpoint={config.API.GET_CATEGORIES}
+          endpoint={config.API.CATEGORIES}
           getOptionLabel={(option) => option.category_name}
           isOptionEqualToValue={(option, value) =>
             option.category_id === value.category_id

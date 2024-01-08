@@ -80,7 +80,7 @@ export default function CreateProduct({ open, handleClose }: ComponentProps) {
                 placeholder="Search brand"
                 query="q"
                 setValue={setBrand}
-                endpoint={config.API.GET_BRANDS}
+                endpoint={config.API.BRANDS}
                 value={brand}
                 getOptionLabel={(option) => option.brand_name}
                 isOptionEqualToValue={(option, value) =>
@@ -98,7 +98,7 @@ export default function CreateProduct({ open, handleClose }: ComponentProps) {
                 clearOnBlur={false}
                 setValue={setCategory}
                 value={category}
-                endpoint={config.API.GET_CATEGORIES}
+                endpoint={config.API.CATEGORIES}
                 getOptionLabel={(option) => option.category_name}
                 isOptionEqualToValue={(option, value) =>
                   option.category_id === value.category_id

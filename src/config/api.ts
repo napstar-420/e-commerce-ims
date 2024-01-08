@@ -1,6 +1,6 @@
 export default {
-  LOGIN: '/auth/user/login',
-  GET_PRODUCTS: '/ims/products',
-  GET_BRANDS: '/ims/brands',
-  GET_CATEGORIES: 'ims/categories'
+  LOGIN: '/api/auth/user/login',
+  PRODUCTS: '/api/products',
+  BRANDS: '/api/brands',
+  CATEGORIES: '/api/categories'
 };
