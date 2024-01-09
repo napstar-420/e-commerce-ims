@@ -1,19 +1,30 @@
-import { useState } from 'react';
+import { ChangeEvent, useState, DragEvent, useEffect } from 'react';
+import {
+  IconButton,
+  ImageList,
+  ImageListItem,
+  ImageListItemBar,
+  Typography,
+  Box,
+  Grid,
+  DialogTitle,
+  Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  ListSubheader,
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Grid from '@mui/material/Unstable_Grid2';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import { GridCloseIcon } from '@mui/x-data-grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import AutoComplete from './AutoComplete';
-import config from '../config';
+import { useAlert } from '../hooks/useAlert';
 import { Brand, Category } from '../dto';
+import { formatFileSize } from '../utils';
+import config from '../config';
+import { v4 as uuid } from 'uuid';
 
 interface ComponentProps {
   open: boolean;
@@ -24,6 +35,8 @@ interface InputProps {
   id: string;
   label: string;
   type: 'text' | 'number';
+  value: string | number;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   multiline?: boolean;
   rows?: number;
 }
@@ -43,11 +56,132 @@ function FormInput(props: InputProps) {
   );
 }
 
+interface ProductImagesProps {
+  images: File[];
+  setImages: (images: File[]) => void;
+}
+
+function ProductImages({ images, setImages }: ProductImagesProps) {
+  const height = 164;
+  const theme = useTheme();
+
+  if (!images.length) {
+    return;
+  }
+
+  const removeImage = (index: number): void => {
+    const newImages = images.slice(0, index).concat(images.slice(index + 1));
+    setImages(newImages);
+  };
+
+  return (
+    <ImageList
+      cols={3}
+      sx={{ paddingTop: theme.spacing(2), paddingBottom: theme.spacing(2) }}
+    >
+      <ImageListItem key="Subheader" cols={3}>
+        <ListSubheader
+          component="div"
+          sx={{
+            bgcolor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+          }}
+        >
+          Product images
+        </ListSubheader>
+      </ImageListItem>
+      {images.map((image, index) => {
+        const imgSrc = URL.createObjectURL(image);
+        const fileSize = formatFileSize(image.size);
+
+        return (
+          <ImageListItem key={index}>
+            <img src={imgSrc} style={{ height: height }} loading="lazy" />
+            <ImageListItemBar
+              title={image.name}
+              subtitle={fileSize}
+              actionIcon={
+                <IconButton
+                  sx={{ color: theme.palette.error.main }}
+                  onClick={() => removeImage(index)}
+                >
+                  <GridCloseIcon />
+                </IconButton>
+              }
+            />
+          </ImageListItem>
+        );
+      })}
+    </ImageList>
+  );
+}
+
 export default function CreateProduct({ open, handleClose }: ComponentProps) {
   const theme = useTheme();
+  const { actions: Alert } = useAlert();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const [name, setName] = useState<string>('');
+  const [price, setPrice] = useState<number>(0);
+  const [quantity, setQuantity] = useState<number>(0);
+  const [description, setDescription] = useState<string>('');
   const [brand, setBrand] = useState<string>('');
   const [category, setCategory] = useState<string>('');
+  const [images, setImages] = useState<File[]>([]);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+
+  const handleDragStart = (e: DragEvent): void => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragEnd = (e: DragEvent): void => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: DragEvent): void => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const files = e.dataTransfer?.files;
+
+    if (files) {
+      setImages([...images, ...files]);
+    }
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const files = e.target.files;
+
+    if (files) {
+      setImages([...images, ...files]);
+    }
+  };
+
+  const resetStates = (): void => {
+    setName('');
+    setPrice(0);
+    setQuantity(0);
+    setDescription('');
+    setBrand('');
+    setCategory('');
+    setImages([]);
+  };
+
+  useEffect(() => {
+    if (images.length > 10) {
+      setImages(images.slice(0, 10));
+      Alert.addAlert({
+        id: uuid(),
+        text: '10 images are allowed',
+        title: 'MAX IMAGES LIMIT',
+        type: 'warning',
+      });
+    }
+  }, [images]);
 
   return (
     <Dialog
@@ -63,16 +197,34 @@ export default function CreateProduct({ open, handleClose }: ComponentProps) {
         </DialogContentText>
         <form>
           <Grid container spacing={2}>
-            <Grid xs={12}>
-              <FormInput id="name" label="Name" type="text" />
+            <Grid item xs={12}>
+              <FormInput
+                id="name"
+                label="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                type="text"
+              />
             </Grid>
-            <Grid xs={12} sm={6}>
-              <FormInput id="price" label="Price" type="number" />
+            <Grid item xs={12} sm={6}>
+              <FormInput
+                id="price"
+                label="Price"
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(+e.target.value)}
+              />
             </Grid>
-            <Grid xs={12} sm={6}>
-              <FormInput id="quantity" label="Quantity" type="number" />
+            <Grid item xs={12} sm={6}>
+              <FormInput
+                id="quantity"
+                label="Quantity"
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(+e.target.value)}
+              />
             </Grid>
-            <Grid xs={12} sm={6}>
+            <Grid item xs={12} sm={6}>
               <AutoComplete<Brand>
                 id="brand-search"
                 label="Brand"
@@ -88,7 +240,7 @@ export default function CreateProduct({ open, handleClose }: ComponentProps) {
                 }
               />
             </Grid>
-            <Grid xs={12} sm={6}>
+            <Grid item xs={12} sm={6}>
               <AutoComplete<Category>
                 id="category-search"
                 label="Category"
@@ -105,43 +257,75 @@ export default function CreateProduct({ open, handleClose }: ComponentProps) {
                 }
               />
             </Grid>
-            <Grid xs={12}>
+            <Grid item xs={12}>
               <FormInput
                 id="description"
                 label="Description"
                 type="text"
                 multiline
                 rows={5}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </Grid>
-            <Grid xs={12}>
+            <Grid item xs={12}>
               <Box
-                component={'div'}
                 p={4}
                 border={`2px dashed ${theme.palette.grey[400]}`}
+                borderRadius={2}
+                position="relative"
                 display="grid"
                 justifyItems="center"
+                alignItems="center"
                 gap={1}
+                color={
+                  isDragging
+                    ? theme.palette.primary.contrastText
+                    : theme.palette.text.primary
+                }
+                bgcolor={
+                  isDragging
+                    ? theme.palette.primary.main
+                    : theme.palette.background.default
+                }
               >
-                <Typography>Drag and drop Images here</Typography>
-                <Button variant="contained" className="relative">
+                <Typography textAlign="center">
+                  Drag and drop Images here
+                  <br /> Or click to select images
+                </Typography>
+                <label
+                  htmlFor="images-input"
+                  onDragOver={handleDragStart}
+                  onDragLeave={handleDragEnd}
+                  onDrop={handleDrop}
+                  className="absolute top-0 left-0 w-full h-full cursor-pointer"
+                >
                   <input
-                    type="file"
+                    id="images-input"
+                    name="images-input"
+                    hidden
                     multiple
-                    className="absolute cursor-pointer opacity-0"
-                    onChange={(e) => console.log(e.target.files)}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
                   />
-                  Select Images
-                </Button>
+                </label>
               </Box>
             </Grid>
           </Grid>
           {/* To support submit on enter */}
           <button hidden type="submit" />
         </form>
+        <ProductImages images={images} setImages={setImages} />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="error">
+        <Button
+          onClick={() => {
+            resetStates();
+            handleClose();
+          }}
+          color="error"
+        >
           Cancel
         </Button>
         <Button onClick={handleClose}>Create</Button>
